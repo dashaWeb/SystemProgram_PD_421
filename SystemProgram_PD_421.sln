@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "02_TaskManager", "02_TaskMa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "03_thread_example_app", "03_thread_example_app\03_thread_example_app.csproj", "{A1518C07-3571-4440-8F2B-146BFADCABCA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "04_GenerateNumber_async_await", "04_GenerateNumber_async_await\04_GenerateNumber_async_await.csproj", "{CD05380A-432F-439F-ADAD-DCC38A2168F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "04_GenerateNumber_async_await", "04_GenerateNumber_async_await\04_GenerateNumber_async_await.csproj", "{CD05380A-432F-439F-ADAD-DCC38A2168F3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "05_CopyFile", "05_CopyFile\05_CopyFile.csproj", "{792091F8-9623-448C-94A3-96DF4CB7EDC9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{CD05380A-432F-439F-ADAD-DCC38A2168F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD05380A-432F-439F-ADAD-DCC38A2168F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD05380A-432F-439F-ADAD-DCC38A2168F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{792091F8-9623-448C-94A3-96DF4CB7EDC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{792091F8-9623-448C-94A3-96DF4CB7EDC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{792091F8-9623-448C-94A3-96DF4CB7EDC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{792091F8-9623-448C-94A3-96DF4CB7EDC9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
