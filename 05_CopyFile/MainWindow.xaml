@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:_05_CopyFile"
         mc:Ignorable="d"
-        d:DataContext="{d:DesignInstance local:PercentageInfo, IsDesignTimeCreatable=True}"
+        d:DataContext="{d:DesignInstance local:ViewModel, IsDesignTimeCreatable=True}"
         Title="MainWindow" Height="450" Width="800">
     <Window.Resources>
         <Style TargetType="{x:Type Button}">
@@ -19,7 +19,7 @@
             <Setter Property="VerticalContentAlignment" Value="Center"></Setter>
         </Style>
     </Window.Resources>
-    <DockPanel LastChildFill="False">
+    <DockPanel LastChildFill="True">
         <Grid DockPanel.Dock="Top">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"></ColumnDefinition>
@@ -40,8 +40,32 @@
             <Button Click="OpenDestBtn" Grid.Row="1" Grid.Column="2">Browse</Button>
         </Grid>
         <Button Click="CopyBtn" DockPanel.Dock="Top" Padding="10">Copy</Button>
-        <ProgressBar x:Name="progress" DockPanel.Dock="Bottom" Height="30" Value="{Binding Percentage}" ></ProgressBar>
-        <TextBlock TextAlignment="Center" DockPanel.Dock="Bottom" Name="number" Text="{Binding Number}"></TextBlock>
+        <ProgressBar x:Name="progress" DockPanel.Dock="Bottom" Height="30" IsIndeterminate="{Binding IsWaiting}" ></ProgressBar>
+        <ListBox HorizontalContentAlignment="Stretch" ItemsSource="{Binding Processes}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                            <ColumnDefinition Width="*"></ColumnDefinition>
+                            <ColumnDefinition Width="Auto"></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            FontWeight="Bold"
+                            MaxWidth="150"
+                            VerticalAlignment="Center"
+                            Margin="20,0"
+                            Text="{Binding FileName}"></TextBlock>
+                        <TextBlock Grid.Column="1" Margin="20,0">Speed: <Run Text="{Binding MegaBytesSecond, Mode=OneWay}"></Run>Mb/s</TextBlock>
+                        <ProgressBar Grid.Column="2" Height="10" Margin="5" Value="{Binding Percentage}"></ProgressBar>
+                        <TextBlock Grid.Column="3" Margin="20,0"><Run Text="{Binding PercentageInt, Mode=OneWay}"></Run>%</TextBlock>
+                    </Grid>
+
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </DockPanel>
-    
+
 </Window>

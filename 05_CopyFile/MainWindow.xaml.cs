@@ -1,11 +1,14 @@
-﻿using Microsoft.Win32;
+﻿using IOExtensions;
+using Microsoft.Win32;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using PropertyChanged;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,18 +27,23 @@ namespace _05_CopyFile
     /// </summary>
     public partial class MainWindow : Window
     {
-       
-        PercentageInfo info;
+
+        ViewModel model;
+        int id = 0;
         public MainWindow()
         {
             InitializeComponent();
-            info = new PercentageInfo() { 
-                Percentage = 0,
-                Number = ""
+            model = new ViewModel()
+            {
+                Source = @"C:\Users\konopelko\Downloads\TaskParallelLib.rar",
+                Destination = @"C:\Users\konopelko\Downloads\Test",
+                Progress = 0,
             };
-            srcTextBox.Text = info.Source = @"C:\Users\konopelko\Downloads\TaskParallelLib.rar";
-            destTextBox.Text = info.Destination = @"C:\Users\konopelko\Downloads\Test";
-            this.DataContext = info;
+            srcTextBox.Text = model.Source;
+            destTextBox.Text = model.Destination;
+
+
+            this.DataContext = model;
         }
 
         private void OpenSourceBtn(object sender, RoutedEventArgs e)
@@ -43,7 +51,7 @@ namespace _05_CopyFile
             OpenFileDialog dialog = new OpenFileDialog();
             if (dialog.ShowDialog() == true)
             {
-                srcTextBox.Text = info.Source = dialog.FileName;
+                srcTextBox.Text = model.Source = dialog.FileName;
             }
         }
 
@@ -51,17 +59,27 @@ namespace _05_CopyFile
         {
             CommonOpenFileDialog dialog = new CommonOpenFileDialog();
             dialog.IsFolderPicker = true;
-            if(dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                destTextBox.Text = info.Destination = dialog.FileName;
+                destTextBox.Text = model.Destination = dialog.FileName;
             }
         }
 
         private async void CopyBtn(object sender, RoutedEventArgs e)
         {
+
+            string FileName = System.IO.Path.GetFileName(model.Source);
+            string destFilePath = System.IO.Path.Combine(model.Destination, $"{FileName}({id++})");
+
+            CopyProcessInfo info = new CopyProcessInfo(FileName);
+            model.AddProcess(info);
+            info.Percentage = 100;
+            await CopyFileAsync(model.Source, destFilePath, info);
+            
+            
             // way1
-            string FileName = System.IO.Path.GetFileName(info.Source);
-            string destFilePath = System.IO.Path.Combine(info.Destination,FileName);
+            //string FileName = System.IO.Path.GetFileName(model.Source);
+            //string destFilePath = System.IO.Path.Combine(model.Destination, FileName);
             /*MessageBox.Show(destFilePath);
             File.Copy(Source, destFilePath, true);*/
 
@@ -82,12 +100,23 @@ namespace _05_CopyFile
                     } while (bytes > 0);
                 }
             }*/
-            await CopyFileAsync(info.Source,destFilePath);
-            MessageBox.Show("Complate");
+            //await CopyFileAsync(model.Source, destFilePath);
+
         }
-        private Task CopyFileAsync(string src, string dest)
+        private Task CopyFileAsync(string src, string dest, CopyProcessInfo info)
         {
-            return Task.Run(() => {
+
+
+            return FileTransferManager.CopyWithProgressAsync(src, dest, (progress) => {
+                model.Progress = progress.Percentage;
+                info.Percentage = progress.Percentage;
+                info.BytesSecond = progress.BytesPerSecond;
+              
+            },false);
+
+
+            /*return Task.Run(() =>
+            {
                 using (FileStream srcStream = new FileStream(src, FileMode.Open, FileAccess.Read))
                 {
                     using (FileStream destStream = new FileStream(dest, FileMode.Create, FileAccess.Write))
@@ -99,20 +128,43 @@ namespace _05_CopyFile
                             bytes = srcStream.Read(buffer, 0, buffer.Length);
                             destStream.Write(buffer, 0, bytes);
                             float percentage = destStream.Length / (srcStream.Length / 100);
-                            info.Percentage = (int)percentage;
-                            info.Number = $"{info.Percentage}%";
+                            *//*info.Percentage = (int)percentage;
+                            info.Number = $"{info.Percentage}%";*//*
                         } while (bytes > 0);
                     }
                 }
-            });
+            });*/
         }
     }
     [AddINotifyPropertyChangedInterface]
-    public class PercentageInfo
+    public class ViewModel
     {
-        public int Percentage { get; set; }
-        public string Number { get; set; }
+        private ObservableCollection<CopyProcessInfo> processes;
         public string Source { get; set; }
         public string Destination { get; set; }
+        public double Progress { get; set; }
+        public bool IsWaiting => Progress == 0;
+        public IEnumerable<CopyProcessInfo> Processes => processes;
+        public ViewModel()
+        {
+            processes = new ObservableCollection<CopyProcessInfo>();
+        }
+        public void AddProcess(CopyProcessInfo info)
+        {
+            processes.Add(info);
+        }
+    }
+    [AddINotifyPropertyChangedInterface]
+    public class CopyProcessInfo
+    {
+        public string FileName { get; set; }
+        public double Percentage { get; set; }
+        public int PercentageInt => (int)Percentage;
+        public double BytesSecond { get; set; }
+        public double MegaBytesSecond => Math.Round(BytesSecond / 1024 / 1024,1);
+        public CopyProcessInfo(string fileName)
+        {
+            FileName = fileName;
+        }
     }
 }
