@@ -6,9 +6,18 @@
         xmlns:local="clr-namespace:_05_CopyFile"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance local:ViewModel, IsDesignTimeCreatable=True}"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal"
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        >
     <Window.Resources>
-        <Style TargetType="{x:Type Button}">
+        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource MaterialDesignRaisedDarkButton}">
             <Setter Property="Margin" Value="5"></Setter>
             <Setter Property="Padding" Value="5"></Setter>
             <Setter Property="FontWeight" Value="Bold"></Setter>
@@ -39,30 +48,33 @@
             <TextBox Name="destTextBox" Style="{StaticResource pathTextBox}" Grid.Row="1" Grid.Column="1"></TextBox>
             <Button Click="OpenDestBtn" Grid.Row="1" Grid.Column="2">Browse</Button>
         </Grid>
-        <Button Click="CopyBtn" DockPanel.Dock="Top" Padding="10">Copy</Button>
+        <Button Click="CopyBtn" DockPanel.Dock="Top" >Copy</Button>
         <ProgressBar x:Name="progress" DockPanel.Dock="Bottom" Height="30" IsIndeterminate="{Binding IsWaiting}" ></ProgressBar>
         <ListBox HorizontalContentAlignment="Stretch" ItemsSource="{Binding Processes}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"></ColumnDefinition>
-                            <ColumnDefinition Width="Auto"></ColumnDefinition>
-                            <ColumnDefinition Width="*"></ColumnDefinition>
-                            <ColumnDefinition Width="Auto"></ColumnDefinition>
-                        </Grid.ColumnDefinitions>
-                        <TextBlock
+                    <materialDesign:Card
+                    Padding="0"
+                    Background="#FF075780"
+                    Foreground="{DynamicResource PrimaryHueDarkForegroundBrush}">
+                        <Grid Margin="0, 20">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                <ColumnDefinition Width="*"></ColumnDefinition>
+                                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
                             FontWeight="Bold"
                             MaxWidth="150"
                             VerticalAlignment="Center"
                             Margin="20,0"
                             Text="{Binding FileName}"></TextBlock>
-                        <TextBlock Grid.Column="1" Margin="20,0">Speed: <Run Text="{Binding MegaBytesSecond, Mode=OneWay}"></Run>Mb/s</TextBlock>
-                        <ProgressBar Grid.Column="2" Height="10" Margin="5" Value="{Binding Percentage}"></ProgressBar>
-                        <TextBlock Grid.Column="3" Margin="20,0"><Run Text="{Binding PercentageInt, Mode=OneWay}"></Run>%</TextBlock>
-                    </Grid>
-
+                            <TextBlock Grid.Column="1" Margin="20,0">Speed: <Run Text="{Binding MegaBytesSecond, Mode=OneWay}"></Run>Mb/s</TextBlock>
+                            <ProgressBar Foreground="{StaticResource SecondaryHueMidBrush}" Grid.Column="2" Height="10" Margin="5" Value="{Binding Percentage}"></ProgressBar>
+                            <TextBlock Grid.Column="3" Margin="20,0"><Run Text="{Binding PercentageInt, Mode=OneWay}"></Run>%</TextBlock>
+                        </Grid>
+                    </materialDesign:Card>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
